@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: pf-mysql
+    restart: no
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_APP_USER}
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD}
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - preflight_pf-net
+
+  backend:
+    container_name: pf-mysql-backend
+    build: .
+    ports:
+      - "${PORT}:3000"
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_DB: ${MYSQL_DB}
+      MYSQL_PORT: 3306
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_APP_USER: ${MYSQL_APP_USER}
+      MYSQL_APP_PASSWORD: ${MYSQL_APP_PASSWORD}
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - preflight_pf-net
+    command: >
+      sh -c " npx wait-port mysql:3306 &&
+              npm run db:migrate &&
+              npm run start"
+
+volumes:
+  mysql_data:
+
+
+networks:
+  preflight_pf-net:
+    external: true
