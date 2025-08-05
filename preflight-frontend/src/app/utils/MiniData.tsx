@@ -1,7 +1,8 @@
 export const MiniData: any = [
   {
     id: '230r87293-491',
-    imageUrl: '',
+    imageUrl:
+      'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
     title: 'Product 1',
     category: 'Category 1',
     amount: 10,
@@ -9,7 +10,8 @@ export const MiniData: any = [
   },
   {
     id: ';aosduf29euou',
-    imageUrl: '',
+    imageUrl:
+      'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
     title: 'Product 2',
     category: 'Category 2',
     amount: 10,
@@ -17,7 +19,8 @@ export const MiniData: any = [
   },
   {
     id: '230r87293-491',
-    imageUrl: '',
+    imageUrl:
+      'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
     title: 'Product 1',
     category: 'Category 1',
     amount: 10,
@@ -25,7 +28,8 @@ export const MiniData: any = [
   },
   {
     id: ';aosduf29euou',
-    imageUrl: '',
+    imageUrl:
+      'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
     title: 'Product 2',
     category: 'Category 2',
     amount: 10,
@@ -33,7 +37,8 @@ export const MiniData: any = [
   },
   {
     id: '230r87293-491',
-    imageUrl: '',
+    imageUrl:
+      'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
     title: 'Product 1',
     category: 'Category 1',
     amount: 10,

@@ -4,6 +4,7 @@ import StyledComponentsRegistry from '@/app/lib/registry';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '@/app/styles/theme';
 import Main from '@/app/components/Main';
+import './globals.css';
 
 // Load the font properly
 const ibmThai = IBM_Plex_Sans_Thai({
