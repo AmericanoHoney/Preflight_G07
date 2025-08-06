@@ -26,13 +26,13 @@ import {
   int,
 } from "drizzle-orm/mysql-core";
 
-export const todoTable = mysqlTable("mytodo_natrada", {
-  id: char("id", { length: 36 }).primaryKey(),
-  todoText: varchar("todo_text", { length: 255 }).notNull(),
-  isDone: boolean("is_done").default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").onUpdateNow(),
-});
+// export const todoTable = mysqlTable("mytodo_natrada", {
+//   id: char("id", { length: 36 }).primaryKey(),
+//   todoText: varchar("todo_text", { length: 255 }).notNull(),
+//   isDone: boolean("is_done").default(false),
+//   createdAt: timestamp("created_at").defaultNow().notNull(),
+//   updatedAt: timestamp("updated_at").onUpdateNow(),
+// });
 
 export const stockTable = mysqlTable("storestock", {
   id: char("id", { length: 36 }).primaryKey(),

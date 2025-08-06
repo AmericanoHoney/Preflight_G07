@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1754362537867,
-      "tag": "0000_plain_beast",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1754384971348,
-      "tag": "0001_high_wendell_rand",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1754386686948,
-      "tag": "0002_complex_wolverine",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1754386793080,
-      "tag": "0003_elite_chimera",
+      "when": 1754464653389,
+      "tag": "0000_perfect_sabretooth",
       "breakpoints": true
     }
   ]
