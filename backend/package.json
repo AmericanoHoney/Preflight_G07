@@ -43,11 +43,9 @@
     "helmet": "^8.1.0",
     "morgan": "^1.10.1",
     "mysql2": "^3.14.3",
-    "postgres": "^3.4.7",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.20.3",
-    "typescript": "^5.8.3",
-    "uuid": "^11.1.0"
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -57,7 +55,6 @@
     "@types/node": "^24.0.14",
     "cross-env": "^10.0.0",
     "drizzle-kit": "^0.31.4",
-    "nodemon": "^3.1.10",
-    "wait-port": "^1.1.0"
+    "nodemon": "^3.1.10"
   }
 }

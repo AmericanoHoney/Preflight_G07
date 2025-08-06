@@ -1,21 +1,29 @@
 # Setup
 
-- Make sure that you already have DB running from `pf-db` project.
-- Make `.env` from `.env.example` (fillin the password)
-- Make `.npmrc` from `.npmrc.example` (adjust your shell accordingly)
 - `pnpm install`
+- `pnpm i express cors helmet morgan debug`
+- `pnpm i typescript @tsconfig/node-lts @tsconfig/node-ts tsx tsc-alias`
+- `pnpm i -D @types/cors @types/express @types/debug @types/morgan`
+- `pnpm i -D @types/cors @types/express @types/debug @types/morgan @types/node cross-env nodemon`
+- `pnpm i -D drizzle-kit`
+- `pnpm add drizzle-orm mysql2 dotenv`
+- `docker compose up -d`
+- `npm run db:push`
 - `pnpm run dev`
+
 
 # Setup from scratch
 
 - See https://cmu.to/fullstack68
 
-# Containerization and test
+# edit package.json
 
-- Make `.env.test` from `.env.test.example`
-- `docker compose --env-file ./.env.test up -d --force-recreate --build`
-
-# Push to dockerhub
-
-- `docker tag preflight-backend [DOCKERHUB_ACCOUNT]/preflight-backend:latest`
-- `docker push [DOCKERHUB_ACCOUNT]/preflight-backend:latest`
+"scripts": {
+    "dev": "nodemon",
+    "build": "tsc && tsc-alias",
+    "start": "node ./dist/src/index.js",
+    "db:generate": "cross-env NODE_OPTIONS='--import tsx' drizzle-kit generate",
+    "db:push": "cross-env NODE_OPTIONS='--import tsx' drizzle-kit push",
+    "db:migrate": "cross-env NODE_OPTIONS='--import tsx' drizzle-kit migrate",
+    "db:prototype": "tsx ./db/prototype.ts"
+  },
