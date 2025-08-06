@@ -34,7 +34,11 @@ export async function GET<T = any>(path: string): Promise<T> {
 //   }
 // }
 
-export async function POST<T = any>(path: string, body: any): Promise<T> {
+export async function POST<T = any>(
+  path: string,
+  body: any,
+  p0?: { signal: AbortSignal }
+): Promise<T> {
   try {
     const res = await fetch(`${BASE_URL}${path}`, {
       method: 'POST',
@@ -79,10 +83,11 @@ export async function PUT<T = any>(path: string, body: any): Promise<T> {
   }
 }
 
-export async function DEL<T = any>(path: string): Promise<T> {
+export async function DEL<T = any>(path: string, body: any): Promise<T> {
   try {
     const res = await fetch(`${BASE_URL}${path}`, {
       method: 'DELETE',
+      body: JSON.stringify(body),
       cache: 'no-store',
     });
 

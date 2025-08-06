@@ -24,6 +24,7 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <StyledComponentsRegistry>
             <ThemeProvider theme={theme}>
+              {/* <Navbar /> */}
               <Main>{children}</Main>
             </ThemeProvider>
           </StyledComponentsRegistry>

@@ -1,8 +1,7 @@
 export const MiniData: any = [
   {
     id: '230r87293-491',
-    imageUrl:
-      'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+    imageUrl: '/product-cover-test.jpg',
     title: 'Product 1',
     category: 'Category 1',
     amount: 10,
@@ -20,7 +19,7 @@ export const MiniData: any = [
   {
     id: '230r87293-491',
     imageUrl:
-      'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg/1920px-020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg',
     title: 'Product 1',
     category: 'Category 1',
     amount: 10,
