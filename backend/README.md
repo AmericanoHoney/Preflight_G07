@@ -7,6 +7,8 @@
 - `pnpm i -D @types/cors @types/express @types/debug @types/morgan @types/node cross-env nodemon`
 - `pnpm i -D drizzle-kit`
 - `pnpm add drizzle-orm mysql2 dotenv`
+- `pnpm add uuid`
+- `pnpm add -D @types/uuid`
 - `docker compose up -d`
 - `npm run db:push`
 - `pnpm run dev`
