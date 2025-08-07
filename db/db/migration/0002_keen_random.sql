@@ -1,0 +1,1 @@
+ALTER TABLE "mytodo_natrada" DROP COLUMN "detail";
