@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "fbe6ecf9-3731-445b-bfbb-a65a650a8ebd",
-  "prevId": "4b86f23e-34be-433b-81a6-7da874ae02f8",
+  "id": "bf9fbb61-4ffc-4d65-9f63-38fcc4379e0d",
+  "prevId": "50627f05-1ecd-4230-aa71-f324c5dcf763",
   "tables": {
     "storestock": {
       "name": "storestock",

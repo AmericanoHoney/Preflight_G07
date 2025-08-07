@@ -22,11 +22,12 @@
 
 import "dotenv/config";
 
-const dbUser = process.env.MYSQL_APP_USER;
-const dbPassword = process.env.MYSQL_APP_PASSWORD;
-const dbHost = process.env.MYSQL_HOST;
-const dbPort = process.env.MYSQL_PORT || 3306;
-const dbName = process.env.MYSQL_DB;
+const dbUser = process.env.MYSQL_APP_USER || 'preflightG07';
+const dbPassword = process.env.MYSQL_APP_PASSWORD || 5678;
+const dbHost = process.env.MYSQL_HOST || 'localhost';
+const dbPort = process.env.MYSQL_PORT || 3307;
+const dbName = process.env.MYSQL_DB || 'preflightG07';
+port: parseInt(process.env.MYSQL_PORT || '3307');
 
 if (!dbUser || !dbPassword || !dbHost || !dbName) {
   throw new Error("Invalid DB env.");

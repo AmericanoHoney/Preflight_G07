@@ -1,4 +1,4 @@
-version: "3.8"
+name: preflight-project
 
 services:
   mysql:
@@ -13,15 +13,17 @@ services:
     ports:
       - "${MYSQL_PORT}:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
     networks:
-      - preflight_pf-net
+      - pf-net
 
   backend:
     container_name: pf-mysql-backend
     build: .
     ports:
       - "${PORT}:3000"
+    networks:
+      - pf-net
     depends_on:
       - mysql
     environment:
@@ -30,19 +32,19 @@ services:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_APP_USER: ${MYSQL_APP_USER}
       MYSQL_APP_PASSWORD: ${MYSQL_APP_PASSWORD}
+      NODE_ENV: production
+      PORT: 3000
+    restart: unless-stopped
     volumes:
       - ./logs:/app/logs
-    networks:
-      - preflight_pf-net
-    command: >
-      sh -c " npx wait-port mysql:3306 &&
-              npm run db:migrate &&
-              npm run start"
+
+    post_start:
+      - command: [ "sh", "-c", 'npm run db:migrate | awk ''{ print strftime("[%Y-%m-%d %H:%M:%S]"), $0; fflush(); }'' | tee -a /app/logs/migration.log' ]
 
 volumes:
-  mysql_data:
+  mysql-data:
 
 
 networks:
-  preflight_pf-net:
+  pf-net:
     external: true

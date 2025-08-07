@@ -1,1 +1,0 @@
-ALTER TABLE "mytodo_natrada" ADD COLUMN "detail" varchar(255) NOT NULL;

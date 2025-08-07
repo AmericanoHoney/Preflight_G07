@@ -2,16 +2,21 @@
 set -e
 
 echo "---------------------------------------------"
-echo "Setting up PostgreSQL database: $POSTGRES_DB"
-echo "Creating application user: $POSTGRES_APP_USER"
+echo "Setting up MySQL database: $MYSQL_DB"
+echo "Creating application user: $MYSQL_APP_USER"
 echo "---------------------------------------------"
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB"<<-EOSQL
-    REVOKE CONNECT ON DATABASE $POSTGRES_DB FROM public;
-    REVOKE ALL ON SCHEMA public FROM PUBLIC;
-    CREATE USER $POSTGRES_APP_USER WITH PASSWORD '$POSTGRES_APP_PASSWORD';
-    CREATE SCHEMA drizzle;
-    GRANT ALL ON DATABASE $POSTGRES_DB TO $POSTGRES_APP_USER;
-    GRANT ALL ON SCHEMA public TO $POSTGRES_APP_USER;
-    GRANT ALL ON SCHEMA drizzle TO $POSTGRES_APP_USER;
+mysql -u"$MYSQL_ROOT_USER" -p"$MYSQL_ROOT_PASSWORD" <<-EOSQL
+
+    CREATE DATABASE IF NOT EXISTS $MYSQL_DB;
+
+    CREATE USER IF NOT EXISTS '$MYSQL_APP_USER'@'%' IDENTIFIED BY '$MYSQL_APP_PASSWORD';
+
+    GRANT ALL PRIVILEGES ON $MYSQL_DB.* TO '$MYSQL_APP_USER'@'%';
+
+    CREATE DATABASE IF NOT EXISTS drizzle;
+
+    GRANT ALL PRIVILEGES ON drizzle.* TO '$MYSQL_APP_USER'@'%';
+
+    FLUSH PRIVILEGES;
 EOSQL

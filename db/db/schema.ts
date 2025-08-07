@@ -1,18 +1,19 @@
 import {
-  pgTable,
-  timestamp,
-  uuid,
+  mysqlTable,
   varchar,
   boolean,
-} from "drizzle-orm/pg-core";
+  timestamp,
+  char,
+  int,
+} from "drizzle-orm/mysql-core";
 
-export const todoTable = pgTable("mytodo_natrada", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  todoText: varchar("todo_text", { length: 255 }).notNull(),
-  // detail: varchar("detail", { length: 255 }).notNull(),
-  isDone: boolean("is_done").default(false),
+export const stockTable = mysqlTable("storestock", {
+  id: char("id", { length: 36 }).primaryKey(),
+  imageUrl: varchar("img_url", { length: 2048 }),
+  title: varchar("title", { length: 255 }).notNull(),
+  category: varchar("category", { length: 255 }).notNull(),
+  productid: char("productid", { length: 36 }).notNull(),
+  amount: int("amount").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(
-    () => new Date()
-  ),
+  updatedAt: timestamp("updated_at").onUpdateNow(),
 });

@@ -1,26 +1,19 @@
 {
   "version": "7",
-  "dialect": "postgresql",
+  "dialect": "mysql",
   "entries": [
     {
       "idx": 0,
-      "version": "7",
-      "when": 1754242116740,
-      "tag": "0000_warm_jane_foster",
+      "version": "5",
+      "when": 1754556045045,
+      "tag": "0000_familiar_vulcan",
       "breakpoints": true
     },
     {
       "idx": 1,
-      "version": "7",
-      "when": 1754243631518,
-      "tag": "0001_panoramic_jackpot",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1754283298737,
-      "tag": "0002_keen_random",
+      "version": "5",
+      "when": 1754556214548,
+      "tag": "0001_mature_doctor_spectrum",
       "breakpoints": true
     }
   ]

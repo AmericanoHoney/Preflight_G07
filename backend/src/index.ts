@@ -48,7 +48,7 @@ app.get("/stock/owner", (req, res) => {
 // Insert
 app.put("/stock", async (req, res, next) => {
   try {
-    const { imageUrl, title, category, amount } = req.body;
+    const { imageUrl, title, productid, category, amount } = req.body;
     if (!title || !category || typeof amount !== "number")
       throw new Error("Missing required fields");
 
@@ -58,6 +58,7 @@ app.put("/stock", async (req, res, next) => {
       id,
       imageUrl,
       title,
+      productid,
       category,
       amount,
     });

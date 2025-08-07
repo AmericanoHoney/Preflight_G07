@@ -1,9 +1,11 @@
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
-import { connectionString } from "@db/utils.js";
+import { connectionConfig } from "./db/utils.ts";
+
+const connectionString = `mysql://${connectionConfig.user}:${connectionConfig.password}@localhost:${connectionConfig.port}/${connectionConfig.database}`;
 
 export default defineConfig({
-  dialect: "postgresql",
+  dialect: "mysql",
   schema: "./db/schema.ts",
   out: "db/migration",
   dbCredentials: {

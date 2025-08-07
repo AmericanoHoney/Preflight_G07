@@ -24,24 +24,40 @@
   },
   "contributors": [],
   "scripts": {
-    "db:generate": "cross-env NODE_OPTIONS='--import tsx' drizzle-kit generate",
-    "db:push": "cross-env NODE_OPTIONS='--import tsx' drizzle-kit push",
-    "db:migrate": "cross-env NODE_OPTIONS='--import tsx' drizzle-kit migrate",
+    "dev": "nodemon",
+    "build": "tsc && tsc-alias",
+    "start": "node ./dist/src/index.js",
+    "db:generate": "cross-env NODE_OPTIONS=\"--import tsx\" drizzle-kit generate",
+    "db:push": "cross-env NODE_OPTIONS=\"--import tsx\" drizzle-kit push",
+    "db:migrate": "cross-env NODE_OPTIONS=\"--import tsx\" drizzle-kit migrate",
     "db:prototype": "tsx ./db/prototype.ts",
     "eol": "eolConverter _entrypoint/*.sh"
   },
   "dependencies": {
-    "dotenv": "^17.2.1",
-    "drizzle-orm": "^0.44.4",
-    "postgres": "^3.4.7"
-  },
-  "devDependencies": {
     "@tsconfig/node-lts": "^22.0.2",
     "@tsconfig/node-ts": "^23.6.1",
-    "@types/node": "^24.1.0",
+    "cors": "^2.8.5",
+    "debug": "^4.4.1",
+    "dotenv": "^17.2.1",
+    "drizzle-orm": "^0.44.4",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.1",
+    "mysql2": "^3.14.3",
+    "tsc-alias": "^1.8.16",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/debug": "^4.1.12",
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.0.14",
+    "@types/uuid": "^10.0.0",
     "cross-env": "^10.0.0",
     "drizzle-kit": "^0.31.4",
-    "tsx": "^4.20.3",
-    "typescript": "^5.9.2"
+    "nodemon": "^3.1.10"
   }
 }
