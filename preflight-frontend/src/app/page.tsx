@@ -1,8 +1,10 @@
 import HomePage from '@/app/components/HomePage';
 import Container from '@/app/components/Container';
 import React from 'react';
+import { GET } from '@/app/lib/api';
 
 export default async function Home() {
+  const response = await GET('/stock');
   return (
     <div className="flex justify-center">
       <Container width="1200px">
@@ -10,7 +12,7 @@ export default async function Home() {
           <h1 className="text-4xl font-bold mb-2">🏪 Product Storage</h1>
           <p className="text-lg opacity-90">จัดการคลังสินค้าของคุณ</p>
         </div>
-        <HomePage />
+        <HomePage response={response} />
       </Container>
     </div>
   );
