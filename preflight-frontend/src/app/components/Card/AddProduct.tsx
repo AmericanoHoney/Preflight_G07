@@ -92,8 +92,8 @@ const AddProduct = () => {
     setIsLoading(true);
     try {
       // Call your POST API
-      const response = await POST('/products', {
-        image: formData.productImage,
+      const response = await POST('/stock', {
+        imageUrl: formData.productImage,
         title: formData.productTitle,
         id: formData.productId,
         amount: formData.amount,

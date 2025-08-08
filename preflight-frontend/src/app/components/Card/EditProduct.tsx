@@ -38,9 +38,8 @@ const BgPopupStyled = styled.div<{
 interface ProductData {
   id: string;
   title: string;
-  image: string;
-  amount: number;
   imageUrl?: string;
+  amount: number;
 }
 
 interface EditProductProps {
@@ -53,8 +52,8 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<ProductData>({
     id: '',
+    imageUrl: '',
     title: '',
-    image: '',
     amount: 0,
   });
   const [errors, setErrors] = useState<Partial<ProductData>>({});
@@ -65,7 +64,6 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
       setFormData({
         id: data.id || '',
         title: data.title || '',
-        image: data.image || '',
         amount: data.amount || 0,
         imageUrl: data.imageUrl,
       });
@@ -87,7 +85,6 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
     // Check if there are changes compared to original data
     setHasChanges(
       newFormData.title !== data.title ||
-        newFormData.image !== data.image ||
         newFormData.amount !== data.amount ||
         newFormData.id !== data.id
     );
@@ -133,7 +130,6 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
       const response = await PUT(`/products/${data.id}`, {
         id: formData.id,
         title: formData.title,
-        image: formData.image,
         amount: formData.amount,
       });
 
@@ -166,7 +162,6 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
     setFormData({
       id: data.id || '',
       title: data.title || '',
-      image: data.image || '',
       amount: data.amount || 0,
       imageUrl: data.imageUrl,
     });
@@ -204,8 +199,8 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
             label="Product Image"
             variant={data.imageUrl ? 'filled' : 'outlined'}
             fullWidth
-            value={formData.image}
-            onChange={(e) => handleInputChange('image', e.target.value)}
+            value={formData.imageUrl}
+            onChange={(e) => handleInputChange('imageUrl', e.target.value)}
             placeholder="Enter image URL"
             disabled={isLoading}
           />
@@ -227,6 +222,18 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
             variant="outlined"
             fullWidth
             value={formData.id}
+            onChange={(e) => handleInputChange('id', e.target.value)}
+            error={!!errors.id}
+            helperText={errors.id}
+            disabled={isLoading}
+            required
+          />
+          <TextField
+            size="small"
+            label="Product Category"
+            variant="outlined"
+            fullWidth
+            value={formData}
             onChange={(e) => handleInputChange('id', e.target.value)}
             error={!!errors.id}
             helperText={errors.id}
