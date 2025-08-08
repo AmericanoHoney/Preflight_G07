@@ -1,11 +1,10 @@
 import Container from '@/app/components/Container';
-import React from 'react';
 import { GET } from '@/app/lib/api';
 import HomePage from '@/app/components/HomePage';
 
 export default async function Home() {
   const allProduct = await GET('/stock');
-  console.log('allProduct', allProduct);
+
   return (
     <div className="flex justify-center">
       <Container width="1200px">
