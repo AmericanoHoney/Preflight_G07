@@ -61,7 +61,8 @@ const HomePage = ({ allProduct }: any) => {
         {/* Results Info */}
         {searchTerm && (
           <div className="mb-4 text-center text-gray-600">
-            พบสินค้า {filteredProducts.length} รายการ สำหรับ `"{searchTerm}"
+            พบสินค้า {filteredProducts.length} รายการ สำหรับ `&#34;{searchTerm}
+            &#34;
           </div>
         )}
 

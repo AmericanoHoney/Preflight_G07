@@ -3,8 +3,6 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import EditProduct from '@/app/components/Card/EditProduct';
-import DeleteProduct from '@/app/components/Card/DeleteProduct';
 import Image from 'next/image';
 
 const ProductCard = ({ data }: any) => {
@@ -64,10 +62,7 @@ const ProductCard = ({ data }: any) => {
           </div>
         </div>
         <div className="w-full border-b border-gray-300 my-2.5"></div>
-        <div className="flex flex-row w-full gap-2.5">
-          <EditProduct data={data} />
-          <DeleteProduct product={data} />
-        </div>
+        <div className="flex flex-row w-full gap-2.5"></div>
       </div>
     </div>
   );
