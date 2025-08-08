@@ -9,7 +9,9 @@ const defaultHeaders = {
 export async function GET<T = any>(path: string): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: 'GET',
+    cache: 'no-store',
   });
+  if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
   return res.json();
 }
 

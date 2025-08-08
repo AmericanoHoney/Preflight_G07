@@ -9,8 +9,8 @@ services:
     ports:
       - "4000:4000"
     networks:
-      - preflight_pf-net
+      - pf-net
 
 networks:
-  preflight_pf-net:
+  pf-net:
     external: true
