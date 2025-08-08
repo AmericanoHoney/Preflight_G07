@@ -37,7 +37,7 @@ export async function GET<T = any>(path: string): Promise<T> {
 export async function POST<T = any>(
   path: string,
   body: any,
-  p0?: { signal: AbortSignal }
+  _p0?: { signal: AbortSignal }
 ): Promise<T> {
   try {
     const res = await fetch(`${BASE_URL}${path}`, {

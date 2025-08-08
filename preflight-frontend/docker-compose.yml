@@ -1,0 +1,16 @@
+name: preflight-project # You can also change this to another name to avoid warning with existing group. 
+services:
+  frontend:
+    container_name: pf-mysql-frontend
+    build: .
+    ports:
+      - ${NGINX_PORT}:80
+    networks:
+      - pf-net
+    environment:
+      - NGINX_PROXY=${NGINX_PROXY}
+      - NGINX_PORT=${NGINX_PORT}
+networks:
+  pf-net:
+    # Check by using `docker network ls` command
+    external: true
