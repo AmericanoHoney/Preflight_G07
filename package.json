@@ -22,17 +22,16 @@
     "email": "",
     "url": ""
   },
-  "contributors": [
-
-  ],
+  "contributors": [],
   "scripts": {
     "dev": "",
     "test": ""
   },
-  "dependencies": {
-
-  },
   "devDependencies": {
-
+    "@eslint/js": "^9.32.0",
+    "eslint": "^9.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.3.0",
+    "typescript-eslint": "^8.39.0"
   }
 }

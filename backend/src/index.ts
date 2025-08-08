@@ -19,8 +19,8 @@ app.use(morgan("dev", { immediate: false }));
 app.use(helmet());
 app.use(
   cors({
-    origin: false, // Disable CORS
-    // origin: "*", // Allow all origins
+    // origin: false, // Disable CORS
+    origin: "*", // Allow all origins
   })
 );
 // Extracts the entire body portion of an incoming request stream and exposes it on req.body.

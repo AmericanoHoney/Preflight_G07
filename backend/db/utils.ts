@@ -37,6 +37,6 @@ export const connectionConfig = {
   host: dbHost,
   port: Number(dbPort),
   user: dbUser,
-  password: dbPassword,
+  password: String(dbPassword),
   database: dbName,
 };

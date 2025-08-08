@@ -1,26 +1,47 @@
-# Use the official Node.js 22 image (Alpine version) as the build environment
+# 1️⃣ Build Stage
 FROM node:22-alpine AS builder
 
-# Enable corepack, which helps manage package managers like pnpm
-RUN corepack enable
+RUN apk add --no-cache libc6-compat && corepack enable
 
-# Set the working directory inside the container to /app
 WORKDIR /app
 
-# Copy all files from your project directory into the container's /app directory
-COPY . .
+# Copy only dependency files for better cache
+COPY package.json pnpm-lock.yaml* ./
 
-# Install project dependencies using pnpm
+# Accept build-time variable from Docker Compose
+ARG NEXT_PUBLIC_ENDPOINT
+ENV NEXT_PUBLIC_ENDPOINT=$NEXT_PUBLIC_ENDPOINT
+
+# Install deps
 RUN pnpm install
 
-# Build the application (for example, compiles source code and bundles files)
-RUN npm run build
+# ✅ Copy the rest of the project including important files
+COPY . .
 
-# Use the official Nginx image (Alpine version) for serving the built app
-FROM nginx:1.28.0-alpine AS production
+# Build Next.js app with the env baked in
+RUN pnpm build
 
-# Copy the Nginx configuration template into the correct directory inside the container
-COPY ./nginx.conf.template /etc/nginx/templates/nginx.conf.template
 
-# Copy the built application files from the builder stage to the directory Nginx serves static files from
-COPY --from=builder /app/out /usr/share/nginx/html
+# 2️⃣ Production Stage
+FROM node:22-alpine AS runner
+
+RUN apk add --no-cache libc6-compat && corepack enable
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=4000
+
+# ✅ Copy package files
+COPY package.json pnpm-lock.yaml* ./
+
+# ✅ Install only prod dependencies
+RUN pnpm install --prod
+
+# ✅ Copy required build outputs and configs
+COPY --from=builder /app/.next .next
+COPY --from=builder /app/public public
+COPY --from=builder /app/next.config.ts next.config.ts
+
+EXPOSE 4000
+CMD ["pnpm", "start", "-p", "4000"]
