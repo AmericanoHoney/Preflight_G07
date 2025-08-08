@@ -3,10 +3,10 @@
 import ProductCard from '@/app/components/Card/ProductCard';
 import Container from '@/app/components/Container';
 import AddProduct from '@/app/components/Card/AddProduct';
-// import { MiniData } from '@/app/utils/MiniData';
 import React, { useEffect, useState } from 'react';
 import { POST, GET } from '@/app/lib/api';
 import Load from '@/app/components/Loading/Load';
+import { MiniData } from '@/app/utils/MiniData';
 
 const HomePage = () => {
   const [allProducts, setAllProducts] = useState<any[]>([]);
@@ -26,7 +26,7 @@ const HomePage = () => {
         setLoading(true);
         setLoadingError('');
 
-        const response = await GET('/stock');
+        const response = MiniData || (await GET('/stock'));
         clearTimeout(timeoutId);
 
         setAllProducts(response || []);
@@ -68,7 +68,7 @@ const HomePage = () => {
     try {
       setSearching(true);
       const searchResponse = await POST(
-        '/articles/list',
+        '/stock/search',
         {
           searchTerm: searchTerm.trim(),
         },
@@ -242,10 +242,7 @@ const HomePage = () => {
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-8">
             {filteredProducts.map((data: any, index: number) => (
-              <div
-                key={data.id || index}
-                className="transform hover:scale-105 transition-transform duration-200"
-              >
+              <div key={index}>
                 <ProductCard data={data} />
               </div>
             ))}

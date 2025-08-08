@@ -38,6 +38,7 @@ const BgPopupStyled = styled.div<{
 interface ProductFormData {
   productImage: string;
   productTitle: string;
+  productCategory: string;
   productId: string;
   amount: number;
 }
@@ -48,6 +49,7 @@ const AddProduct = () => {
   const [formData, setFormData] = useState<ProductFormData>({
     productImage: '',
     productTitle: '',
+    productCategory: '',
     productId: '',
     amount: 0,
   });
@@ -101,6 +103,7 @@ const AddProduct = () => {
       setFormData({
         productImage: '',
         productTitle: '',
+        productCategory: '',
         productId: '',
         amount: 0,
       });
@@ -180,6 +183,19 @@ const AddProduct = () => {
             helperText={errors.productId}
             disabled={isLoading}
             required
+          />
+          <TextField
+            size="small"
+            label="Product Category"
+            variant="outlined"
+            fullWidth
+            value={formData.productCategory}
+            onChange={(e) =>
+              handleInputChange('productCategory', e.target.value)
+            }
+            error={!!errors.productCategory}
+            helperText={errors.productCategory}
+            disabled={isLoading}
           />
           <TextField
             size="small"
