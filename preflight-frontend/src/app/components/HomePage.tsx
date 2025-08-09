@@ -6,7 +6,7 @@ import ProductCard from './Card/ProductCard';
 import AddProduct from './Card/AddProduct';
 import useSWR, { mutate as swrMutate } from 'swr';
 import { get } from '../lib/api';
-import { StockItem } from '../../types/stock';
+import { StockItem } from '../types/stock';
 
 interface HomePageProps {
   allProduct: StockItem[];
