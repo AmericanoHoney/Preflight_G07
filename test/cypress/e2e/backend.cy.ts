@@ -80,4 +80,66 @@ describe('Backend /stock API', () => {
       expect(data).to.have.property('productid', payload.productid);
     });
   });
+
+  it('PATCH /stock updates an item', () => {
+    const createPayload = {
+      title: `Title-${Date.now()}`,
+      category: 'General',
+      amount: 1,
+      productid: uuidLike(),
+      imageUrl: 'https://example.com/a.png',
+    };
+
+    req('PUT', '/stock', createPayload).then((createRes) => {
+      const created = createRes.body.data;
+      const updatePayload = {
+        id: created.id,
+        title: `Updated-${Date.now()}`,
+        category: 'UpdatedCat',
+        amount: 99,
+        imageUrl: 'https://example.com/b.png',
+      };
+
+      req('PATCH', '/stock', updatePayload).then((updateRes) => {
+        expect(updateRes.status).to.eq(200);
+        expect(updateRes.body).to.have.all.keys('msg', 'data');
+        // ตรวจซ้ำด้วย GET ทั้งหมด
+        req('GET', '/stock').then((listRes) => {
+          const items: any[] = listRes.body;
+          const found = items.find((x) => x.id === created.id);
+          expect(found).to.exist;
+          expect(found.title).to.eq(updatePayload.title);
+          expect(found.category).to.eq(updatePayload.category);
+          expect(found.amount).to.eq(updatePayload.amount);
+        });
+      });
+    });
+  });
+
+  it('DELETE /stock removes an item', () => {
+    // สร้างก่อน
+    const createPayload = {
+      title: `Title-${Date.now()}`,
+      category: 'General',
+      amount: 3,
+      productid: uuidLike(),
+      imageUrl: 'https://example.com/c.png',
+    };
+
+    req('PUT', '/stock', createPayload).then((createRes) => {
+      const created = createRes.body.data;
+      req('DELETE', '/stock', { id: created.id }).then((delRes) => {
+        expect(delRes.status).to.eq(200);
+        expect(delRes.body).to.have.all.keys('msg', 'data');
+        expect(delRes.body.data).to.have.property('id', created.id);
+
+        // ยืนยันว่าหายไปแล้ว
+        req('GET', '/stock').then((listRes) => {
+          const items: any[] = listRes.body;
+          const stillThere = items.some((x) => x.id === created.id);
+          expect(stillThere).to.eq(false);
+        });
+      });
+    });
+  });
 });
