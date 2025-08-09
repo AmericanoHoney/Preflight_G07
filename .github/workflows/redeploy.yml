@@ -34,6 +34,12 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      - name: Check files in preflight-frontend folder
+        run: ls -l preflight-frontend
+
+      - name: Check if Dockerfile exists
+        run: ls -l preflight-frontend/Dockerfile
+        
       - name: Login to dockerhub
         uses: docker/login-action@v3
         with:
