@@ -1,5 +1,7 @@
-describe('template spec', () => {
-  it('passes', () => {
-    cy.visit('https://example.cypress.io')
-  })
-})
+before(() => {
+  const url = Cypress.env("BACKEND_URL");
+  cy.request({
+    method: "POST",
+    url: `${url}/todo/all`,
+  });
+});
