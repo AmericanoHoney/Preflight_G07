@@ -1,0 +1,16 @@
+name: preflight-project
+services:
+  frontend:
+    container_name: pf-frontend
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_ENDPOINT: ${NEXT_PUBLIC_ENDPOINT}
+    ports:
+      - "4000:4000"
+    networks:
+      - pf-net
+
+networks:
+  pf-net:
+    external: true
