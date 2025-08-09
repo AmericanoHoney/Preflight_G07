@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 4000",
-    "build": "next build",
+    "dev": "next dev -p 4000",
+    "build": "next build ",
     "start": "next start -p 4000",
     "lint": "next lint"
   },
@@ -24,7 +24,8 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "sharp": "^0.34.1",
-    "styled-components": "^6.1.17"
+    "styled-components": "^6.1.17",
+    "swr": "^2.3.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -35,7 +36,8 @@
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
     "autoprefixer": "^10.4.21",
-    "eslint": "^8",
+    "drizzle-kit": "^0.31.4",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-next": "15.3.2",

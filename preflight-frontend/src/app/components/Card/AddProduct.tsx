@@ -2,17 +2,18 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { CircularProgress, TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { POST } from '@/app/lib/api';
+import { put } from '../../lib/api';
+import { mutate as swrMutate } from 'swr';
+import LoadingOverlay from '../LoadingOverlay'; // ⬅️ add this
 
-const AddPopupStyled = styled.div<{
-  $showPopup: boolean;
-}>`
+const AddPopupStyled = styled.div<{ $showPopup: boolean }>`
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%)
-    ${({ $showPopup }) =>
-      $showPopup ? 'translateY(0)' : 'translateY(-1000px)'};
+  transform: ${({ $showPopup }) =>
+    $showPopup
+      ? 'translate(-50%, -50%) translateY(0)'
+      : 'translate(-50%, -50%) translateY(-1000px)'};
   height: auto;
   width: 90%;
   max-width: 500px;
@@ -20,9 +21,7 @@ const AddPopupStyled = styled.div<{
   z-index: ${({ $showPopup }) => ($showPopup ? 1000 : -1)};
 `;
 
-const BgPopupStyled = styled.div<{
-  $showPopup: boolean;
-}>`
+const BgPopupStyled = styled.div<{ $showPopup: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -33,168 +32,191 @@ const BgPopupStyled = styled.div<{
   transform: ${({ $showPopup }) => ($showPopup ? 'scale(100)' : 'scale(0)')};
 `;
 
-interface ProductFormData {
-  productImage: string;
-  productTitle: string;
-  productCategory: string;
-  productId: string;
+type StockFormData = {
+  imageUrl: string;
+  title: string;
+  productid: string;
+  category: string;
   amount: number;
+};
+
+interface AddProductProps {
+  onProductAdded?: () => void;
 }
 
-const AddProduct = () => {
+const AddProduct = ({ onProductAdded }: AddProductProps) => {
   const [isShowPopup, setShowPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<ProductFormData>({
-    productImage: '',
-    productTitle: '',
-    productCategory: '',
-    productId: '',
+  const [formData, setFormData] = useState<StockFormData>({
+    imageUrl: '',
+    title: '',
+    productid: '',
+    category: '',
     amount: 0,
   });
-  const [errors, setErrors] = useState<Partial<ProductFormData>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof StockFormData, string>>
+  >({});
 
   const handleInputChange = (
-    field: keyof ProductFormData,
+    field: keyof StockFormData,
     value: string | number
   ) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: field === 'amount' ? Number(value) : value, // 🔧 แปลงเป็น number
+      [field]: field === 'amount' ? Number(value) : (value as string),
     }));
-
-    if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: undefined,
-      }));
-    }
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
+  // Simple inline validator to replace validateStockData
   const validateForm = (): boolean => {
-    const newErrors: Partial<any> = {};
-
-    if (!formData.productTitle.trim()) {
-      newErrors.productTitle = 'Product title is required';
-    }
-
-    if (!formData.productId.trim()) {
-      newErrors.productId = 'Product ID is required';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const e: Partial<Record<keyof StockFormData, string>> = {};
+    if (!formData.title.trim()) e.title = 'Title is required';
+    if (!formData.category.trim()) e.category = 'Category is required';
+    if (!formData.productid.trim()) e.productid = 'ProductId is required';
+    if (!Number.isFinite(formData.amount) || formData.amount < 0)
+      e.amount = 'Amount must be 0 or greater';
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
+
+  // Calls backend: PUT /stock  -> { msg, data }
+  async function addStockItem(input: StockFormData) {
+    return put<{ msg: string; data: any }>('/stock', input);
+  }
 
   const handleAddProduct = async () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      // Call your POST API
-      const response = await POST('/stock', {
-        imageUrl: formData.productImage,
-        title: formData.productTitle,
-        id: formData.productId,
-        amount: formData.amount,
-      });
+      const result = await addStockItem(formData);
 
-      // Success - reset form and close popup
+      // Optimistic update: insert the new item into the SWR cache immediately
+      await swrMutate(
+        '/stock',
+        (current: any[] | undefined) => [result.data, ...(current ?? [])],
+        false // don't revalidate yet
+      );
+      // Then revalidate to confirm with server
+      await swrMutate('/stock');
+
+      // reset + close
       setFormData({
-        productImage: '',
-        productTitle: '',
-        productCategory: '',
-        productId: '',
+        imageUrl: '',
+        title: '',
+        productid: '',
+        category: '',
         amount: 0,
       });
       setShowPopup(false);
-      console.log('Product added successfully:', response);
-    } catch (error) {
-      console.error('Error adding product:', error);
+
+      onProductAdded?.(); // optional
       // eslint-disable-next-line no-alert
-      alert('Failed to add product. Please try again.');
+      alert(
+        `Product "${result.data?.title ?? formData.title}" added successfully!`
+      );
+    } catch (error) {
+      console.error(error);
+      // eslint-disable-next-line no-alert
+      alert(error instanceof Error ? error.message : 'Failed to add product');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleClosePopup = () => {
-    if (!isLoading) {
-      setShowPopup(false);
-      setErrors({});
-    }
+    if (isLoading) return;
+    setShowPopup(false);
+    setErrors({});
+    // Optionally reset form here as well
+    // setFormData({ imageUrl: '', title: '', productid: '', category: '', amount: 0 });
+  };
+
+  const handleOpenPopup = () => {
+    if (isShowPopup) return;
+    setShowPopup(true);
+    setErrors({});
   };
 
   return (
     <>
       <div
-        className="bg-gray-300 px-5 py-2.5 w-full h-full button"
-        onClick={isShowPopup ? undefined : () => setShowPopup(true)}
+        className="bg-gray-300 px-5 py-2.5 h-full button"
+        onClick={handleOpenPopup}
         style={{
           pointerEvents: isShowPopup ? 'none' : 'auto',
           cursor: isShowPopup ? 'not-allowed' : 'pointer',
           opacity: isShowPopup ? 0.5 : 1,
         }}
       >
-        <div className="w-full flex justify-center gap-1">
+        <div className="flex justify-center gap-1">
           <div className="flex flex-row items-center font-medium">ADD</div>
-          <AddIcon
-            style={{
-              fontSize: 20,
-            }}
-          />
+          <AddIcon style={{ fontSize: 20 }} />
         </div>
       </div>
+
       <AddPopupStyled $showPopup={isShowPopup}>
         <div className="flex flex-col gap-4 p-6 w-full bg-white rounded-xl shadow-md">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">
             Add Product
           </h2>
+
           <TextField
             size="small"
-            label="Product Image"
+            label="Product Image URL"
             variant="outlined"
             fullWidth
-            value={formData.productImage}
-            onChange={(e) => handleInputChange('productImage', e.target.value)}
-            placeholder="Enter image URL"
+            value={formData.imageUrl}
+            onChange={(e) => handleInputChange('imageUrl', e.target.value)}
+            placeholder="Enter image URL (optional)"
             disabled={isLoading}
+            error={!!errors.imageUrl}
+            helperText={errors.imageUrl}
           />
+
           <TextField
             size="small"
             label="Product Title"
             variant="outlined"
             fullWidth
-            value={formData.productTitle}
-            onChange={(e) => handleInputChange('productTitle', e.target.value)}
-            error={!!errors.productTitle}
-            helperText={errors.productTitle}
+            value={formData.title}
+            onChange={(e) => handleInputChange('title', e.target.value)}
+            error={!!errors.title}
+            helperText={errors.title || 'Required field'}
             disabled={isLoading}
             required
+            placeholder="Enter product title"
           />
+
           <TextField
             size="small"
             label="Product ID"
             variant="outlined"
             fullWidth
-            value={formData.productId}
-            onChange={(e) => handleInputChange('productId', e.target.value)}
-            error={!!errors.productId}
-            helperText={errors.productId}
+            value={formData.productid}
+            onChange={(e) => handleInputChange('productid', e.target.value)}
             disabled={isLoading}
+            error={!!errors.productid}
+            helperText={errors.productid || 'Required field'}
             required
+            placeholder="Enter product ID (optional)"
           />
+
           <TextField
             size="small"
-            label="Product Category"
+            label="Category"
             variant="outlined"
             fullWidth
-            value={formData.productCategory}
-            onChange={(e) =>
-              handleInputChange('productCategory', e.target.value)
-            }
-            error={!!errors.productCategory}
-            helperText={errors.productCategory}
+            value={formData.category}
+            onChange={(e) => handleInputChange('category', e.target.value)}
+            error={!!errors.category}
+            helperText={errors.category || 'Required field'}
             disabled={isLoading}
+            required
+            placeholder="Enter product category"
           />
+
           <TextField
             size="small"
             label="Amount"
@@ -202,13 +224,21 @@ const AddProduct = () => {
             fullWidth
             type="number"
             value={formData.amount}
-            onChange={(e) =>
-              handleInputChange('amount', parseFloat(e.target.value) || 0)
-            }
+            onChange={(e) => handleInputChange('amount', e.target.value)}
             error={!!errors.amount}
-            helperText={errors.amount}
+            helperText={
+              errors.amount || 'Required field - must be 0 or greater'
+            }
             disabled={isLoading}
+            required
+            inputProps={{
+              inputMode: 'numeric',
+              pattern: '[0-9]*',
+              min: 0,
+            }}
+            placeholder="Enter quantity"
           />
+
           <div className="flex w-full items-center justify-center gap-2.5">
             <button
               className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -218,6 +248,7 @@ const AddProduct = () => {
               {isLoading && <CircularProgress size={16} color="inherit" />}
               {isLoading ? 'Adding Product...' : 'Add Product'}
             </button>
+
             <button
               className="w-full mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               onClick={handleClosePopup}
@@ -229,6 +260,7 @@ const AddProduct = () => {
         </div>
       </AddPopupStyled>
       <BgPopupStyled $showPopup={isShowPopup} onClick={handleClosePopup} />
+      <LoadingOverlay show={isLoading} message="Loading..." />
     </>
   );
 };

@@ -1,9 +1,19 @@
-import Container from '@/app/components/Container';
-import { GET } from '@/app/lib/api';
-import HomePage from '@/app/components/HomePage';
+import Container from './components/Container';
+import React from 'react';
+import { get } from './lib/api';
+import HomePage from './components/HomePage';
+
+type StockItem = {
+  id: string;
+  imageUrl?: string | null;
+  title: string;
+  productid?: string | null;
+  category: string;
+  amount: number;
+};
 
 export default async function Home() {
-  const allProduct = await GET('/stock');
+  const allProduct = await get<StockItem[]>('/stock');
 
   return (
     <div className="flex justify-center">

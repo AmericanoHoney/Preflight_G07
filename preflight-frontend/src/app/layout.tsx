@@ -1,9 +1,9 @@
 import { IBM_Plex_Sans_Thai } from 'next/font/google';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import StyledComponentsRegistry from '@/app/lib/registry';
+import StyledComponentsRegistry from './lib/registry';
 import { ThemeProvider } from '@mui/material/styles';
-import theme from '@/app/styles/theme';
-import Main from '@/app/components/Main';
+import theme from './styles/theme';
+import Main from './components/Main';
 import './globals.css';
 
 // Load the font properly
