@@ -4,70 +4,60 @@ services:
   mysql:
     image: mysql:8.0
     container_name: pf-mysql
-    restart: no
+    restart: unless-stopped
     environment:
-      MYSQL_DATABASE: preflightG07
-      MYSQL_USER: preflightG07
-      MYSQL_PASSWORD: "5678"
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: ${MYSQL_DB:-preflightG07}
+      MYSQL_USER: ${MYSQL_APP_USER:-preflightG07}
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD:-5678}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
     ports:
-      - "3307:3306"
+      - "${MYSQL_PORT:-3307}:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
       - pf-net
     healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-u",
-          "preflightG07",
-          "-p5678",
-        ]
-      timeout: 20s
-      retries: 10
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
 
   backend:
     container_name: pf-backend
     build: ./backend
     ports:
-      - "3000:3000"
+      - "${BACKEND_PORT:-3000}:3000"
     networks:
       - pf-net
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      MYSQL_DB: preflightG07
+      MYSQL_DB: ${MYSQL_DB:-preflightG07}
       MYSQL_PORT: 3306
       MYSQL_HOST: mysql
-      MYSQL_APP_USER: preflightG07
-      MYSQL_APP_PASSWORD: "5678"
-      NODE_ENV: production
+      MYSQL_APP_USER: ${MYSQL_APP_USER:-preflightG07}
+      MYSQL_APP_PASSWORD: ${MYSQL_APP_PASSWORD:-5678}
+      NODE_ENV: ${NODE_ENV:-production}
       PORT: 3000
+      DEBUG: pf-backend
     restart: unless-stopped
     volumes:
       - ./backend/logs:/app/logs
-    command: sh -c "npm start"
 
   frontend:
     container_name: pf-frontend
     build:
       context: ./preflight-frontend
       args:
-        NEXT_PUBLIC_ENDPOINT: http://localhost:3000
+        NEXT_PUBLIC_ENDPOINT: ${NEXT_PUBLIC_ENDPOINT:-http://localhost:3000}
     ports:
-      - "4000:4000"
+      - "${FRONTEND_PORT:-4000}:4000"
     networks:
       - pf-net
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_ENDPOINT: http://localhost:3000
+      NEXT_PUBLIC_ENDPOINT: ${NEXT_PUBLIC_ENDPOINT:-http://localhost:3000}
 
 volumes:
   mysql-data:
