@@ -1,0 +1,4 @@
+[2025-08-08 23:09:38] 
+[2025-08-08 23:09:38] > db:migrate
+[2025-08-08 23:09:38] > cross-env NODE_OPTIONS="--import tsx" drizzle-kit migrate
+[2025-08-08 23:09:38] 
