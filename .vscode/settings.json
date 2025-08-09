@@ -8,6 +8,5 @@
     "javascriptreact",
     "typescriptreact"
   ],
-  "eslint.enable": true,
-  "kiroAgent.configureMCP": "Disabled"
+  "eslint.enable": true
 }
