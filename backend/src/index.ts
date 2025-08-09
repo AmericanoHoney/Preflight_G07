@@ -4,6 +4,7 @@ import { stockTable } from "@db/schema.js";
 import cors from "cors";
 import Debug from "debug";
 import { eq } from "drizzle-orm";
+import { migrate } from "drizzle-orm/mysql2/migrator";
 import type { ErrorRequestHandler } from "express";
 import express from "express";
 import helmet from "helmet";
@@ -11,26 +12,15 @@ import morgan from "morgan";
 import { v4 as uuidv4 } from "uuid";
 const debug = Debug("pf-backend");
 
-// Setup database table
+// Setup database using Drizzle migrations
 async function setupDatabase() {
   try {
-    // Create table using raw SQL to avoid drizzle-kit dependency
-    await dbConn.execute(`
-      CREATE TABLE IF NOT EXISTS storestock (
-        id char(36) NOT NULL,
-        img_url varchar(2048),
-        title varchar(255) NOT NULL,
-        category varchar(255) NOT NULL,
-        productid char(36) NOT NULL,
-        amount int NOT NULL,
-        created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at timestamp ON UPDATE CURRENT_TIMESTAMP,
-        CONSTRAINT storestock_id PRIMARY KEY(id)
-      )
-    `);
-    debug("Database table setup completed");
+    debug("Running database migrations...");
+    await migrate(dbClient, { migrationsFolder: "./db/migration" });
+    debug("Database migrations completed successfully");
   } catch (error) {
-    debug("Database setup error:", error);
+    debug("Database migration error:", error);
+    throw error;
   }
 }
 
