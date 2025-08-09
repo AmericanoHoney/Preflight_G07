@@ -142,7 +142,7 @@ const AddProduct = ({ onProductAdded }: AddProductProps) => {
   return (
     <>
       <div
-        className="bg-gray-300 px-5 py-2.5 h-full button"
+        className="bg-gray-300 border-2 border-gray-300 px-5 py-2.5 h-full max-w-[150px] button"
         onClick={handleOpenPopup}
         style={{
           pointerEvents: isShowPopup ? 'none' : 'auto',
