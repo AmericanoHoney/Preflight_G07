@@ -68,13 +68,16 @@ describe('Backend /stock API', () => {
 
     req('PUT', '/stock', payload).then((res) => {
       expect(res.status).to.eq(200);
-      // รองรับรูปแบบ { msg, data }
       expect(res.body).to.have.all.keys('msg', 'data');
+
       const data = res.body.data;
       expect(data).to.include({
         title: payload.title,
         category: payload.category,
         amount: payload.amount,
       });
-})
-
+      expect(data).to.have.property('id').and.to.be.a('string');
+      expect(data).to.have.property('productid', payload.productid);
+    });
+  });
+});
