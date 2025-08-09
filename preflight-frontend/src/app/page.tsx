@@ -1,20 +1,8 @@
-import Container from './components/Container';
-import React from 'react';
-import { get } from './lib/api';
-import HomePage from './components/HomePage';
+import Container from "./components/Container";
+import React from "react";
+import ProductList from "./components/ProductList";
 
-type StockItem = {
-  id: string;
-  imageUrl?: string | null;
-  title: string;
-  productid?: string | null;
-  category: string;
-  amount: number;
-};
-
-export default async function Home() {
-  const allProduct = await get<StockItem[]>('/stock');
-
+export default function Home() {
   return (
     <div className="flex justify-center">
       <Container width="1200px">
@@ -22,7 +10,7 @@ export default async function Home() {
           <h1 className="text-4xl font-bold mb-2">🏪 Product Storage</h1>
           <p className="text-lg opacity-90">จัดการคลังสินค้าของคุณ</p>
         </div>
-        <HomePage allProduct={allProduct} />
+        <ProductList />
       </Container>
     </div>
   );

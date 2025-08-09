@@ -1,15 +1,28 @@
 import "dotenv/config";
-import { dbClient } from "@db/client.js";
+import { dbClient, dbConn } from "@db/client.js";
 import { stockTable } from "@db/schema.js";
 import cors from "cors";
 import Debug from "debug";
 import { eq } from "drizzle-orm";
+import { migrate } from "drizzle-orm/mysql2/migrator";
 import type { ErrorRequestHandler } from "express";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import { v4 as uuidv4 } from "uuid";
 const debug = Debug("pf-backend");
+
+// Setup database using Drizzle migrations
+async function setupDatabase() {
+  try {
+    debug("Running database migrations...");
+    await migrate(dbClient, { migrationsFolder: "./db/migration" });
+    debug("Database migrations completed successfully");
+  } catch (error) {
+    debug("Database migration error:", error);
+    throw error;
+  }
+}
 
 //Intializing the express app
 const app = express();
@@ -102,7 +115,6 @@ app.delete("/stock", async (req, res, next) => {
     const id = req.body.id ?? "";
     if (!id) throw new Error("Empty id");
 
-
     await dbClient.delete(stockTable).where(eq(stockTable.id, id));
 
     res.json({
@@ -143,4 +155,5 @@ const PORT = process.env.PORT || 3000;
 // * Running app
 app.listen(PORT, async () => {
   debug(`Listening on port ${PORT}: http://localhost:${PORT}`);
+  await setupDatabase();
 });
