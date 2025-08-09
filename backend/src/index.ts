@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { dbClient } from "@db/client.js";
+import { dbClient, dbConn } from "@db/client.js";
 import { stockTable } from "@db/schema.js";
 import cors from "cors";
 import Debug from "debug";
@@ -10,6 +10,29 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { v4 as uuidv4 } from "uuid";
 const debug = Debug("pf-backend");
+
+// Setup database table
+async function setupDatabase() {
+  try {
+    // Create table using raw SQL to avoid drizzle-kit dependency
+    await dbConn.execute(`
+      CREATE TABLE IF NOT EXISTS storestock (
+        id char(36) NOT NULL,
+        img_url varchar(2048),
+        title varchar(255) NOT NULL,
+        category varchar(255) NOT NULL,
+        productid char(36) NOT NULL,
+        amount int NOT NULL,
+        created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at timestamp ON UPDATE CURRENT_TIMESTAMP,
+        CONSTRAINT storestock_id PRIMARY KEY(id)
+      )
+    `);
+    debug("Database table setup completed");
+  } catch (error) {
+    debug("Database setup error:", error);
+  }
+}
 
 //Intializing the express app
 const app = express();
@@ -102,7 +125,6 @@ app.delete("/stock", async (req, res, next) => {
     const id = req.body.id ?? "";
     if (!id) throw new Error("Empty id");
 
-
     await dbClient.delete(stockTable).where(eq(stockTable.id, id));
 
     res.json({
@@ -143,4 +165,5 @@ const PORT = process.env.PORT || 3000;
 // * Running app
 app.listen(PORT, async () => {
   debug(`Listening on port ${PORT}: http://localhost:${PORT}`);
+  await setupDatabase();
 });
