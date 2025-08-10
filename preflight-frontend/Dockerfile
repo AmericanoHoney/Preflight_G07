@@ -10,8 +10,8 @@ ENV NEXT_PUBLIC_ENDPOINT=${NEXT_PUBLIC_ENDPOINT}
 RUN apk add --no-cache libc6-compat && corepack enable
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --prod --no-frozen-lockfile
 
 COPY . .
 RUN pnpm build
@@ -30,7 +30,7 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml* ./
 # Only prod deps are needed to run "next start"
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --no-frozen-lockfile
 
 # Build outputs
 COPY --from=builder /app/.next .next

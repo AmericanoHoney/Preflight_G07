@@ -84,10 +84,10 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
 
     setHasChanges(
       newFormData.title !== data.title ||
-        newFormData.imageUrl !== data.imageUrl ||
-        newFormData.category !== data.category ||
-        newFormData.productid !== data.productid ||
-        newFormData.amount !== data.amount
+      newFormData.imageUrl !== data.imageUrl ||
+      newFormData.category !== data.category ||
+      newFormData.productid !== data.productid ||
+      newFormData.amount !== data.amount
     );
 
     if (errors[field]) {
@@ -266,11 +266,10 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
             </button>
 
             <button
-              className={`w-full mt-4 px-4 py-2 text-white rounded-md transition disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
-                hasChanges
+              className={`w-full mt-4 px-4 py-2 text-white rounded-md transition disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${hasChanges
                   ? 'bg-blue-600 hover:bg-blue-700'
                   : 'bg-gray-500 hover:bg-gray-600'
-              }`}
+                }`}
               onClick={handleUpdateProduct}
               disabled={isLoading}
             >
@@ -278,8 +277,8 @@ const EditProduct = ({ data, onProductUpdated }: EditProductProps) => {
               {isLoading
                 ? 'Updating...'
                 : hasChanges
-                ? 'Save Changes'
-                : 'No Changes'}
+                  ? 'Save Changes'
+                  : 'No Changes'}
             </button>
           </div>
         </div>
