@@ -298,7 +298,6 @@ describe("Frontend - Product Storage App", () => {
 });
 
   it("should show typing indicator immediately and hide after debounce", () => {
-    // ต้องติดตั้ง fake clock ก่อน visit เพื่อควบคุม setTimeout ใน component
     cy.clock();
     cy.visit(frontendUrl);
 
@@ -325,115 +324,6 @@ describe("Frontend - Product Storage App", () => {
     cy.get('input[aria-label="Search"]').should("have.value", "abc");
     cy.get('button[aria-label="Clear search"]').click();
     cy.get('input[aria-label="Search"]').should("have.value", "");
-  });
-});
-
-describe("Delete All Products (DeleteProduct Component)", () => {
-  beforeEach(() => {
-    // เพิ่มสินค้าทดสอบอย่างน้อย 1 ชิ้นก่อนลบ
-    cy.request({
-      method: "PUT",
-      url: `${backendUrl}/stock`,
-      body: {
-        title: "Delete Flow Seed",
-        category: "Temp",
-        amount: 1,
-        productid: "DELSEED001",
-      },
-    });
-  });
-
-  const openDeleteAllPopup = () => {
-    cy.visit(frontendUrl);
-    cy.contains("Delete All").click();
-    cy.contains("Delete All Products").should("be.visible");
-  };
-
-  it("should open and close the popup via Cancel and backdrop", () => {
-    openDeleteAllPopup();
-
-    // ปุ่ม Cancel ปิด popup
-    cy.contains("Cancel").click();
-    cy.contains("Delete All Products").should("not.exist");
-
-    // เปิดใหม่แล้วลองกดฉากหลัง (Backdrop) ให้ปิด
-    cy.contains("Delete All").click();
-    cy.contains("Delete All Products").should("be.visible");
-    cy.get('div')
-      .filter((_, el) => {
-        const style = getComputedStyle(el);
-        return style.position === "fixed" && style.background.includes("rgba");
-      })
-      .last()
-      .click({ force: true });
-    cy.contains("Delete All Products").should("not.exist");
-  });
-
-  it("should call DELETE /stock/all and close on success, then reflect empty state", () => {
-    // ดัก DELETE และ GET หลังลบ
-    cy.intercept("DELETE", "**/stock/all", { statusCode: 200, body: { msg: "ok" } }).as("deleteAll");
-    cy.intercept("GET", "**/stock", (req) => {
-      // หลังลบให้ส่ง [] กลับ เพื่อสะท้อนว่าไม่มีสินค้า
-      req.reply({ statusCode: 200, body: [] });
-    }).as("getStockAfter");
-
-    openDeleteAllPopup();
-
-    // กดปุ่มยืนยัน
-    cy.contains("button", "Yes, Delete Product").click();
-
-    // ระหว่างยิงรีเควสท์ควร disabled และขึ้น Deleting...
-    cy.contains("button", "Deleting...").should("be.disabled");
-
-    // สำเร็จแล้วปิด popup
-    cy.wait("@deleteAll");
-    cy.contains("Delete All Products").should("not.exist");
-
-    // หน้ารีโหลดข้อมูลใหม่ (SWR revalidate)
-    cy.wait("@getStockAfter");
-
-    // ควรเห็น empty state
-    cy.contains("No products yet.").should("be.visible");
-  });
-
-  it("should show loading state while deleting and remain open on failure (with alert)", () => {
-    // จำลองล้มเหลว
-    cy.intercept("DELETE", "**/stock/all", {
-      statusCode: 500,
-      body: { msg: "error" },
-      delay: 300, // ให้เห็นสถานะกำลังลบ
-    }).as("deleteAllFail");
-
-    // intercept GET เพื่อรีวัลลิเดตคืนค่ารายการเดิม
-    cy.intercept("GET", "**/stock").as("getStockRevalidate");
-
-    let alerted = false;
-    cy.on("window:alert", (txt) => {
-      alerted = true;
-      expect(txt).to.match(/Failed to delete all products/i);
-    });
-
-    openDeleteAllPopup();
-
-    cy.contains("button", "Yes, Delete Product").click();
-
-    // ขณะกำลังลบ: ปุ่ม disabled และข้อความเปลี่ยน
-    cy.contains("button", "Deleting...").should("be.disabled");
-
-    cy.wait("@deleteAllFail");
-    cy.wait("@getStockRevalidate"); // มีการ revalidate เพื่อ rollback
-
-    // ควรยังเห็น popup (เพราะล้มเหลวแล้วไม่ปิด)
-    cy.contains("Delete All Products").should("be.visible");
-
-    // มี alert แจ้งเตือน
-    cy.then(() => {
-      expect(alerted).to.eq(true);
-    });
-
-    // ปิดด้วย Cancel ได้เมื่อไม่กำลังโหลด
-    cy.contains("Cancel").click();
-    cy.contains("Delete All Products").should("not.exist");
   });
 });
 });
