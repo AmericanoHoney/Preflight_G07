@@ -1,47 +1,42 @@
-# 1️⃣ Build Stage
+# syntax=docker/dockerfile:1
+
+############################
+# 1) Build Stage
+############################
 FROM node:22-alpine AS builder
+ARG NEXT_PUBLIC_ENDPOINT
+ENV NEXT_PUBLIC_ENDPOINT=${NEXT_PUBLIC_ENDPOINT}
 
 RUN apk add --no-cache libc6-compat && corepack enable
-
 WORKDIR /app
 
-# Copy only dependency files for better cache
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --prod --no-frozen-lockfile
 
-# Accept build-time variable from Docker Compose
-ARG NEXT_PUBLIC_ENDPOINT
-ENV NEXT_PUBLIC_ENDPOINT=$NEXT_PUBLIC_ENDPOINT
-
-# Install deps
-RUN pnpm install
-
-# ✅ Copy the rest of the project including important files
 COPY . .
-
-# Build Next.js app with the env baked in
 RUN pnpm build
 
-
-# 2️⃣ Production Stage
+############################
+# 2) Run Stage
+############################
 FROM node:22-alpine AS runner
-
-RUN apk add --no-cache libc6-compat && corepack enable
-
-WORKDIR /app
-
+ARG NEXT_PUBLIC_ENDPOINT
+ENV NEXT_PUBLIC_ENDPOINT=${NEXT_PUBLIC_ENDPOINT}
 ENV NODE_ENV=production
 ENV PORT=4000
 
-# ✅ Copy package files
+RUN apk add --no-cache libc6-compat && corepack enable
+WORKDIR /app
+
 COPY package.json pnpm-lock.yaml* ./
+# Only prod deps are needed to run "next start"
+RUN pnpm install --prod --no-frozen-lockfile
 
-# ✅ Install only prod dependencies
-RUN pnpm install --prod
-
-# ✅ Copy required build outputs and configs
+# Build outputs
 COPY --from=builder /app/.next .next
 COPY --from=builder /app/public public
-COPY --from=builder /app/next.config.ts next.config.ts
+# (Copying next.config.* into runner is not required for "next start")
+# COPY --from=builder /app/next.config.ts next.config.ts
 
 EXPOSE 4000
 CMD ["pnpm", "start", "-p", "4000"]
