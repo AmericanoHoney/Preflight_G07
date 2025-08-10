@@ -1,7 +1,13 @@
 describe("Frontend - Product Storage App", () => {
   // Force correct URLs regardless of environment variables
-  const frontendUrl = "http://localhost:4000";
+  const frontendUrl = "http://localhost:6007";
   const backendUrl = "http://localhost:3000";
+
+  before(() => {
+    cy.exec('npm run dev -- -p 6007', { failOnNonZeroExit: false });
+    // Wait for the server to start
+    cy.wait(5000);
+  });
 
   beforeEach(() => {
     // Clear any existing products before each test
