@@ -18,11 +18,11 @@ describe("Frontend - Product Storage App", () => {
 
       // Check main heading
       cy.contains("🏪 Product Storage").should("be.visible");
-      cy.contains("จัดการคลังสินค้าของคุณ").should("be.visible");
+      cy.contains("จัดการคลังสินค้าของฉัน").should("be.visible");
 
       // Check page structure
-      cy.get('[class*="bg-gradient-to-r"]').should("exist");
-      cy.get('[class*="from-blue-600"]').should("exist");
+      cy.get('[class*="bg-gray-700"]', { timeout: 8000 }).should("exist");
+      cy.get('[class*="rounded-2xl"]').should("exist");
     });
 
     it("should display loading state initially", () => {
