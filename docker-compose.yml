@@ -46,7 +46,7 @@ services:
 
   frontend:
     container_name: pf-frontend
-    # image: ${FRONTEND_IMAGE_NAME}
+    image: ${FRONTEND_IMAGE_NAME}
     build:
       context: ./preflight-frontend
       args:
