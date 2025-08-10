@@ -15,7 +15,8 @@ type StockItem = {
   productid?: string | null;
   category: string;
   amount: number; // can be 0
-  updateDate?: string | null; // optional; format/display if you have it
+  updatedAt?: string | null; // optional; format/display if you have it
+  createdAt?: string | null;
 };
 
 const ProductCard = ({ data }: { data: StockItem }) => {
@@ -37,7 +38,9 @@ const ProductCard = ({ data }: { data: StockItem }) => {
       </div>
       <div className="p-3">
         {data.title && (
-          <div className="text-[22px] font-extrabold py-2.5">{data.title}</div>
+          <div className="text-[22px] font-extrabold py-2.5 overflow-hidden text-ellipsis whitespace-nowrap">
+            {data.title}
+          </div>
         )}
 
         <div className="flex flex-row gap-4 justify-between">
@@ -56,7 +59,11 @@ const ProductCard = ({ data }: { data: StockItem }) => {
             </div>
             <div className="text-[14px] font-extralight">Last Update</div>
             <div className="text-[14px] font-medium">
-              {data.updateDate ?? '-'}
+              {data.updatedAt
+                ? `${dayjs(data.updatedAt).fromNow()}`
+                : data.createdAt
+                ? `${dayjs(data.createdAt).fromNow()}`
+                : '-'}
             </div>
           </div>
         </div>
