@@ -1,7 +1,6 @@
 import {
   mysqlTable,
   varchar,
-  boolean,
   timestamp,
   char,
   int,
